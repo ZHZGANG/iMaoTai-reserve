@@ -1,4 +1,5 @@
 import datetime
+import logging_config
 import logging
 import sys
 
@@ -10,21 +11,6 @@ import report
 from statistics import Statistics, UserResult
 
 from notify import PushplusNotifier
-
-DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
-TODAY = datetime.date.today().strftime("%Y%m%d")
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s  %(filename)s : %(levelname)s  %(message)s',  # 定义输出log的格式
-                    stream=sys.stdout,
-                    datefmt=DATE_FORMAT)
-
-print(r'''
-**************************************
-    欢迎使用i茅台自动预约工具
-    作者GitHub：https://github.com/3 9 7 1 7 9 4 5 9
-    vx：L 3 9 7 1 7 9 4 5 9 加好友注明来意
-**************************************
-''')
 
 process.get_current_session_id()
 
