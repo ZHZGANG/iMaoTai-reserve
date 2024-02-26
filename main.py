@@ -12,6 +12,8 @@ from statistics import Statistics, UserResult
 
 from notify import PushplusNotifier
 
+TODAY = datetime.date.today().strftime("%Y%m%d")
+
 process.get_current_session_id()
 
 # 校验配置文件是否存在
