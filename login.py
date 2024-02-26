@@ -3,7 +3,8 @@ import os
 import config as cf
 import process
 import privateCrypt
-
+import base64
+import credential_codec
 config = configparser.ConfigParser()  # 类实例化
 
 
@@ -18,10 +19,13 @@ def get_credentials_path():
             os.mkdir(config_parent_path)
         return config_path
 
-
-path = get_credentials_path()
-# 这里config需要用encoding，以防跨平台乱码
-config.read(path, encoding="utf-8")
+if cf.CREDENTIALS_BASE64:
+    # 将 base64编码的字符串解码后，导入 config
+    credential_codec.decode(cf.CREDENTIALS_BASE64, config)
+else:
+    path = get_credentials_path()
+    # 这里config需要用encoding，以防跨平台乱码
+    config.read(path, encoding="utf-8")
 sections = config.sections()
 
 
@@ -83,7 +87,13 @@ if __name__ == '__main__':
         config.set(encrypt_mobile, 'lat', location.split(',')[1])
         config.set(encrypt_mobile, 'lng', location.split(',')[0])
 
-        config.write(open(path, 'w+', encoding="utf-8"))  # 保存数据
+        # 保存数据
+        with open(path, 'w', encoding="utf-8") as f:
+            config.write(f)
+
+        # 将配置文件转为 base64编码，可以作为 secrets 放在 github secrets 中
+        with open(path+".base64", "wb", encoding='utf-8') as base64_file:
+            credential_codec.encode(config, base64_file)
 
         condition = input(f"是否继续添加账号[y/n]:").strip()
 

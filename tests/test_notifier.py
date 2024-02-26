@@ -27,7 +27,7 @@ class TestPushPlusNotifier(unittest.TestCase):
     def tearDown(self):
         requests.get = requests.get
 
-@unittest.skipIf(len(config.PUSH_TOKEN)<10, 'No PushPlus token provided')
+@unittest.skipIf(config.PUSH_TOKEN is None or len(config.PUSH_TOKEN)<10, 'No PushPlus token provided')
 class TestRealPushPlusNotifier(unittest.TestCase):
     def test_real_sending(self):
         notifier = PushplusNotifier(token=config.PUSH_TOKEN)

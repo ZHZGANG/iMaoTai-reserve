@@ -39,48 +39,37 @@
 4、根据配置文件预约CONFIG文件中，所在城市的i茅台商品
 ```
 
+# 使用方法
+## Overview
+1. 需要先在本地运行登录脚本，配置好登录信息和抢购信息。
+2. 配置 Github Actions 环境变量如下（环境名称以及解释）
+   - `PUSHPLUS_KEY`：推送信息的 key
+   - `PRIVATE_AES_KEY`：自定义私钥（吧）
+   - `CREDENTIALS_BASE64`: credential.base64这个文件的内容，即原项目中`./myConfig/credentials`文件内容经过 base64 编码后得到的字符串。
 
-### 使用方法：
-
-### 1、安装依赖
+## 具体使用步骤：
+### 本地 run 的部分
+如果不需要添加手机号，则login.py只需要跑一次，因为每添加一个手机号，都会写入一次本地文件。
+1. 安装依赖
 ```shell
 pip3 install --no-cache-dir -r requirements.txt
 ```
-
-### 2、修改config.py，按照你的需求修改相关配置，这里很重要，建议每个配置项都详细阅读。
-
-
-### 3、按提示输入 预约位置、手机号、验证码 等，生成的token等。很长时间不再需要登录。支持多账号，支持加密。
-1. 第一次使用先清空`./myConfig/credentials`中的信息，或者直接删除`credentials`文件也可以
-2. 再去配置环境变量 `GAODE_KEY`,再运行`login.py`.
+2. 修改config.py，按照你的需求修改相关配置，这里很重要，建议每个配置项都详细阅读。（注意不要泄露自己的 TOKEN 哈！）
+3. 再去配置环境变量 `GAODE_KEY`,再运行`login.py`。高德 API Token用于根据预约位置寻找最近的茅台专卖店。
+4. 按提示输入 预约位置、手机号、验证码 等，生成的token等。很长时间不再需要登录。支持多账号，支持加密。
 ```shell
 python3 login.py
-# 都选择完之后可以去./myConfig/credentials中查看
+# 都填写完之后可以去./myConfig/credentials中查看明文的配置信息
 ```
 
-### 4、python3 main.py ,执行预约操作
-```shell
-python3 main.py
-```
+### 需要 Github 上配置的部分
+**请确保本地运行部分已执行，`./myConfig/credentials.base64`已经生成**
 
-### 5、配置 Github actions，每日自动预约，省去自己买服务器的成本。
-- 先Fork本项目，再去自己的项目中配置`PUSHPLUS_KEY`和和`PRIVATE_AES_KEY`
+1. 配置github secrets，共 3 项
+   - `PUSHPLUS_KEY`：推送信息的 key，去 [PushPlus官网](https://www.pushplus.plus/) 申请一个，分分钟搞定
+   - `PRIVATE_AES_KEY`：自定义私钥（吧），随便写个喜欢的字符串
+   - `CREDENTIALS_BASE64`: `./myConfig/credentials.base64`这个文件的内容
 
-#### 欢迎请我喝咖啡（O.o），对我下班和周末时光的努力进行肯定，您的赞赏将会给我带来更多动力。或者动动小手点个小星星
-
-<img src="resources/imgs/wxqr.png" height="300">  <img src="resources/imgs/zfbqr.jpg" height="300">
-
-#### 感谢老板赞赏，排名不分先后
-
-- *minal
-- *hoty
-- 佚名
-- *宇
-- *wang
-- *LiuLiang
-- *辉
-- *困
-- *ame
 
 ## 特别感谢
 技术思路：https://blog.csdn.net/weixin_47481826/article/details/128893239

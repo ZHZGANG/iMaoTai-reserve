@@ -57,3 +57,6 @@ _RULES = {
     'MAX_SALES': 1,      # 预约本市出货量最大的门店
 }
 RESERVE_RULE = 0         # 在这里配置你的规则，只能选择其中一个
+
+# python login.py 运行完毕后，产生的 base64 文件内容
+CREDENTIALS_BASE64 = os.environ.get("CREDENTIALS_BASE64")
