@@ -58,6 +58,7 @@ jobs:
         env:
           PUSHPLUS_KEY: ${{ secrets.PUSHPLUS_KEY }}
           PRIVATE_AES_KEY: ${{ secrets.PRIVATE_AES_KEY }}
+          CREDENTIALS_BASE64: ${{ secrets.CREDENTIALS_BASE64 }}
         run: |
           python main.py
 
