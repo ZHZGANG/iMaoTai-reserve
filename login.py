@@ -5,8 +5,10 @@ import process
 import privateCrypt
 import base64
 import credential_codec
-config = configparser.ConfigParser()  # 类实例化
+import logging_config
+import logging
 
+config = configparser.ConfigParser()  # 类实例化
 
 def get_credentials_path():
     if cf.CREDENTIALS_PATH is not None:
@@ -21,12 +23,15 @@ def get_credentials_path():
 
 if cf.CREDENTIALS_BASE64:
     # 将 base64编码的字符串解码后，导入 config
+    logging.info("Get credentials from env 'CREDENTIALS_BASE64'")
     credential_codec.decode(cf.CREDENTIALS_BASE64, config)
 else:
+    logging.info("Get credentials from file")
     path = get_credentials_path()
     # 这里config需要用encoding，以防跨平台乱码
     config.read(path, encoding="utf-8")
 sections = config.sections()
+logging.info(f"Config sections: {sections}")
 
 
 def get_location():
