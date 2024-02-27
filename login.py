@@ -92,12 +92,13 @@ if __name__ == '__main__':
         config.set(encrypt_mobile, 'lat', location.split(',')[1])
         config.set(encrypt_mobile, 'lng', location.split(',')[0])
 
+        path = get_credentials_path()
         # 保存数据
         with open(path, 'w', encoding="utf-8") as f:
             config.write(f)
 
         # 将配置文件转为 base64编码，可以作为 secrets 放在 github secrets 中
-        with open(path+".base64", "wb", encoding='utf-8') as base64_file:
+        with open(path+".base64", "wb") as base64_file:
             credential_codec.encode(config, base64_file)
 
         condition = input(f"是否继续添加账号[y/n]:").strip()

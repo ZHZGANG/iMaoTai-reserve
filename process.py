@@ -9,6 +9,7 @@ import config
 from encrypt import Encrypt
 import requests
 import hashlib
+import logging_config
 import logging
 from shadow import shadow
 AES_KEY = 'qbhajinldepmucsonaaaccgypwuvcjaa'
@@ -43,37 +44,35 @@ mt_version = get_mt_version()
 mt_version = json.loads(requests.get('https://itunes.apple.com/cn/lookup?id=1600482450').text)['results'][0]['version']
 
 
-header_context = f'''
-MT-Lat: 28.499562
-MT-K: 1675213490331
-MT-Lng: 102.182324
-Host: app.moutai519.com.cn
-MT-User-Tag: 0
-Accept: */*
-MT-Network-Type: WIFI
-MT-Token: 1
-MT-Team-ID: 
-MT-Info: 028e7f96f6369cafe1d105579c5b9377
-MT-Device-ID: 2F2075D0-B66C-4287-A903-DBFF6358342A
-MT-Bundle-ID: com.moutai.mall
-Accept-Language: en-CN;q=1, zh-Hans-CN;q=0.9
-MT-Request-ID: 167560018873318465
-MT-APP-Version: 1.3.7
-User-Agent: iOS;16.3;Apple;?unrecognized?
-MT-R: clips_OlU6TmFRag5rCXwbNAQ/Tz1SKlN8THcecBp/HGhHdw==
-Content-Length: 93
-Accept-Encoding: gzip, deflate, br
-Connection: keep-alive
-Content-Type: application/json
-userId: 2
-'''
+header_context = {
+    'MT-Lat': '28.499562',
+    'MT-K': '1675213490331',
+    'MT-Lng': '102.182324',
+    'Host': 'app.moutai519.com.cn',
+    'MT-User-Tag': '0',
+    'Accept': '*/*',
+    'MT-Network-Type': 'WIFI',
+    'MT-Token': '1',
+    'MT-Team-ID': '',
+    'MT-Info': '028e7f96f6369cafe1d105579c5b9377',
+    'MT-Device-ID': '2F2075D0-B66C-4287-A903-DBFF6358342A',
+    'MT-Bundle-ID': 'com.moutai.mall',
+    'Accept-Language': 'en-CN;q=1, zh-Hans-CN;q=0.9',
+    'MT-Request-ID': '167560018873318465',
+    'MT-APP-Version': '1.3.7',
+    'User-Agent': 'iOS;16.3;Apple;?unrecognized?',
+    'MT-R': 'clips_OlU6TmFRag5rCXwbNAQ/Tz1SKlN8THcecBp/HGhHdw==',
+    'Content-Length': '93',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection': 'keep-alive',
+    'Content-Type': 'application/json',
+    'userId': '2'
+}
 
 
 # 初始化请求头
 def init_headers(user_id: str = '1', token: str = '2', lat: str = '29.83826', lng: str = '119.74375'):
-    for k in header_context.strip().split("\n"):
-        temp_l = k.split(': ')
-        dict.update(headers, {temp_l[0]: temp_l[1]})
+    headers.update(header_context)
     dict.update(headers, {"userId": user_id})
     dict.update(headers, {"MT-Token": token})
     dict.update(headers, {"MT-Lat": lat})
