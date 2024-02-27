@@ -6,5 +6,5 @@
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/vcs.xml
 /.idea/*
-/__pycache__/*
+**/__pycache__/*
 /myConfig
