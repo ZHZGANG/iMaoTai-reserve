@@ -73,7 +73,7 @@ for user_section in configs.sections():
 
             # 领取小茅运和耐力值
             process.getUserEnergyAward(mobile)
-            stat.update(user_result)
+        stat.update(user_result)
     except BaseException as e:
         print(e)
         logging.error(e)
