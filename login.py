@@ -7,6 +7,7 @@ import base64
 import credential_codec
 import logging_config
 import logging
+import click
 
 config = configparser.ConfigParser()  # 类实例化
 
@@ -54,19 +55,40 @@ def get_location():
         print(f'已选择 地区:{province},[{formatted_address}]附近的门店')
         return select
 
-
-if __name__ == '__main__':
-
+@click.command()
+@click.option('--simple-mode', '-s', is_flag=True, help='是否使用简单模式，号码存在时跳过', required=False)
+def login(simple_mode):
     aes_key = privateCrypt.get_aes_key()
 
     while 1:
         process.init_headers()
-        location_select: dict = get_location()
-        province = location_select['province']
-        city = location_select['city']
-        location: str = location_select['location']
 
+        # 获取手机号
         mobile = input("输入手机号[13812341234]:").strip()
+        encrypt_mobile = privateCrypt.encrypt_aes_ecb(mobile, aes_key)
+
+
+        # 只有当非简易模式，或号码不存在时，
+        # 才需要需要设置位置，否则沿用之前的位置信息
+        relocate: bool = False
+        if (not simple_mode) or (not config.has_section(encrypt_mobile)):
+            relocate = True
+
+        if not config.has_section(encrypt_mobile):
+            config.add_section(encrypt_mobile)  # 首先添加一个新的section
+
+        if relocate:
+            # 获取位置信息
+            logging.info("skip location setting in simple mode.")
+            location_select: dict = get_location()
+            province = location_select['province']
+            city = location_select['city']
+            location: str = location_select['location']
+            config.set(encrypt_mobile, 'province', str(province))
+            config.set(encrypt_mobile, 'city', str(city))
+            config.set(encrypt_mobile, 'lat', location.split(',')[1])
+            config.set(encrypt_mobile, 'lng', location.split(',')[0])
+
         process.get_vcode(mobile)
         code = input(f"输入 [{mobile}] 验证码[1234]:").strip()
         token, userId = process.login(mobile, code)
@@ -76,21 +98,13 @@ if __name__ == '__main__':
         # 为了增加辨识度，这里做了隐私处理，不参与任何业务逻辑
         hide_mobile = mobile.replace(mobile[3:7], '****')
         # 因为加密了手机号和Userid，所以token就不做加密了
-        encrypt_mobile = privateCrypt.encrypt_aes_ecb(mobile, aes_key)
         encrypt_userid = privateCrypt.encrypt_aes_ecb(str(userId), aes_key)
-
-        if encrypt_mobile not in sections:
-            config.add_section(encrypt_mobile)  # 首先添加一个新的section
 
         config.set(encrypt_mobile, 'hidemobile', hide_mobile)
         config.set(encrypt_mobile, 'enddate', endDate)
         config.set(encrypt_mobile, 'userid', encrypt_userid)
-        config.set(encrypt_mobile, 'province', str(province))
-        config.set(encrypt_mobile, 'city', str(city))
         config.set(encrypt_mobile, 'token', str(token))
 
-        config.set(encrypt_mobile, 'lat', location.split(',')[1])
-        config.set(encrypt_mobile, 'lng', location.split(',')[0])
 
         path = get_credentials_path()
         # 保存数据
@@ -105,3 +119,6 @@ if __name__ == '__main__':
 
         if condition.lower() == 'n':
             break
+
+if __name__ == '__main__':
+    login()
